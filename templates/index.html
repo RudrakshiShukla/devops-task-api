@@ -1,0 +1,218 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>DevOps Task Manager</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f3f6fc;
+            color: #1e293b;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e293b, #334e80);
+            color: white;
+            padding: 28px;
+            border-radius: 16px;
+            margin-bottom: 28px;
+            box-shadow: 0 8px 20px rgba(30, 41, 59, 0.12);
+        }
+
+        header h1 {
+            margin: 0 0 10px;
+            font-size: 28px;
+        }
+
+        header p {
+            margin: 0;
+            color: #dbeafe;
+            line-height: 1.6;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .stat {
+            background: white;
+            padding: 18px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .stat p {
+            margin: 0 0 8px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .stat h2 {
+            margin: 0;
+            font-size: 26px;
+        }
+
+        .section-title {
+            margin-bottom: 16px;
+        }
+
+        .card {
+            background: white;
+            padding: 18px 20px;
+            margin-bottom: 12px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(30, 41, 59, 0.06);
+        }
+
+        .task-name {
+            font-weight: 600;
+            overflow-wrap: anywhere;
+        }
+
+        .completed {
+            color: #15803d;
+            background: #dcfce7;
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .pending {
+            color: #b45309;
+            background: #fef3c7;
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .empty {
+            background: white;
+            padding: 24px;
+            text-align: center;
+            color: #64748b;
+            border-radius: 12px;
+        }
+
+        .footer {
+            text-align: center;
+            color: #64748b;
+            margin-top: 30px;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .footer span {
+            color: #2563eb;
+            font-weight: 600;
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 24px 14px;
+            }
+
+            header h1 {
+                font-size: 23px;
+            }
+
+            .summary {
+                gap: 8px;
+            }
+
+            .stat {
+                padding: 12px;
+            }
+
+            .stat h2 {
+                font-size: 22px;
+            }
+
+            .card {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+
+        <header>
+            <h1>My Task Manager 🚀</h1>
+            <p>Stay organized. Keep learning. Keep growing.</p>
+        </header>
+
+        <section class="summary">
+            <div class="stat">
+                <p>Total Tasks</p>
+                <h2>{{ tasks | length }}</h2>
+            </div>
+
+            <div class="stat">
+                <p>Completed</p>
+                <h2>{{ tasks | selectattr('completed') | list | length }}</h2>
+            </div>
+
+            <div class="stat">
+                <p>Pending</p>
+                <h2>{{ tasks | rejectattr('completed') | list | length }}</h2>
+            </div>
+        </section>
+
+        <h2 class="section-title">📋 My Learning Tasks</h2>
+
+        {% for task in tasks %}
+        <div class="card">
+            <span class="task-name">{{ task.task }}</span>
+
+            {% if task.completed %}
+                <span class="completed">✓ Completed</span>
+            {% else %}
+                <span class="pending">● Pending</span>
+            {% endif %}
+        </div>
+        {% else %}
+        <div class="empty">
+            No tasks available yet.
+        </div>
+        {% endfor %}
+
+        <footer class="footer">
+            Built with <span>Python + Flask</span><br>
+            DevOps Learning Project | Git • Docker • Jenkins
+        </footer>
+
+    </main>
+</body>
+</html>
+
