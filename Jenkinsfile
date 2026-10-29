@@ -5,16 +5,27 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                echo 'GitHub checkout completed by Jenkins'
+                echo 'Source code checked out from GitHub'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh 'python3 --version'
+                sh 'python3 -m pip install -r requirements.txt'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh 'python3 -m unittest test_app -v'
             }
         }
 
         stage('Verify Project') {
             steps {
-                echo 'Jenkins pipeline is running successfully'
                 sh 'ls -la'
             }
         }
     }
 }
-
