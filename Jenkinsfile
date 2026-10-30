@@ -3,6 +3,7 @@ pipeline {
     agent any
 
     stages {
+
         stage('Checkout') {
             steps {
                 echo 'Source code checked out from GitHub'
@@ -30,6 +31,19 @@ pipeline {
             }
         }
 
+        stage('Deploy Application') {
+            steps {
+                sh '''
+                    docker rm -f task-api-deployed || true
+
+                    docker run -d \
+                    --name task-api-deployed \
+                    -p 5001:5000 \
+                    devops-task-api:${BUILD_NUMBER}
+                '''
+            }
+        }
+
         stage('Verify Project') {
             steps {
                 sh 'ls -la'
@@ -37,3 +51,4 @@ pipeline {
         }
     }
 }
+
