@@ -1,3 +1,4 @@
+
 pipeline {
     agent any
 
@@ -20,6 +21,15 @@ pipeline {
             }
         }
 
+        stage('Build Docker Image') {
+            steps {
+                sh '''
+                    docker build -t devops-task-api:${BUILD_NUMBER} .
+                    docker tag devops-task-api:${BUILD_NUMBER} devops-task-api:latest
+                '''
+            }
+        }
+
         stage('Verify Project') {
             steps {
                 sh 'ls -la'
@@ -27,4 +37,3 @@ pipeline {
         }
     }
 }
-
