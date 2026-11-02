@@ -65,6 +65,27 @@ pipeline {
             }
         }
 
+        stage('Health Check') {
+            steps {
+                sh '''
+                    echo "Checking application health..."
+
+                    for i in $(seq 1 10); do
+                        if curl -fsS http://localhost:5001/health; then
+                            echo "Application is healthy!"
+                            exit 0
+                        fi
+
+                        echo "Waiting for application..."
+                        sleep 3
+                    done
+
+                    echo "Health check failed!"
+                    exit 1
+                '''
+            }
+        }
+
         stage('Verify Project') {
             steps {
                 sh 'ls -la'
