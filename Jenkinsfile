@@ -25,21 +25,42 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 sh '''
-                    docker build -t devops-task-api:${BUILD_NUMBER} .
-                    docker tag devops-task-api:${BUILD_NUMBER} devops-task-api:latest
+                    docker build -t shuklarudrakshi/devops-task-api:${BUILD_NUMBER} .
+                    docker tag shuklarudrakshi/devops-task-api:${BUILD_NUMBER} shuklarudrakshi/devops-task-api:latest
                 '''
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-credentials',
+                    usernameVariable: 'DOCKERHUB_USER',
+                    passwordVariable: 'DOCKERHUB_TOKEN'
+                )]) {
+                    sh '''
+                        printf '%s' "$DOCKERHUB_TOKEN" | docker login --username "$DOCKERHUB_USER" --password-stdin
+
+                        docker push shuklarudrakshi/devops-task-api:${BUILD_NUMBER}
+                        docker push shuklarudrakshi/devops-task-api:latest
+
+                        docker logout
+                    '''
+                }
             }
         }
 
         stage('Deploy Application') {
             steps {
                 sh '''
+                    docker pull shuklarudrakshi/devops-task-api:${BUILD_NUMBER}
+
                     docker rm -f task-api-deployed || true
 
                     docker run -d \
                     --name task-api-deployed \
                     -p 5001:5000 \
-                    devops-task-api:${BUILD_NUMBER}
+                    shuklarudrakshi/devops-task-api:${BUILD_NUMBER}
                 '''
             }
         }
@@ -51,4 +72,3 @@ pipeline {
         }
     }
 }
-
