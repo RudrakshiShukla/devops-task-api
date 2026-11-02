@@ -65,26 +65,28 @@ pipeline {
             }
         }
 
-        stage('Health Check') {
-            steps {
-                sh '''
-                    echo "Checking application health..."
+       
+stage('Health Check') {
+    steps {
+        sh '''
+            echo "Checking application health..."
 
-                    for i in $(seq 1 10); do
-                        if curl -fsS http://localhost:5001/health; then
-                            echo "Application is healthy!"
-                            exit 0
-                        fi
+            for i in $(seq 1 10); do
+                if docker exec task-api-deployed python3 -c "import urllib.request; urllib.request.urlopen('http://localhost:5000/health', timeout=5)" ; then
+                    echo "Application is healthy!"
+                    exit 0
+                fi
 
-                        echo "Waiting for application..."
-                        sleep 3
-                    done
+                echo "Waiting for application..."
+                sleep 3
+            done
 
-                    echo "Health check failed!"
-                    exit 1
-                '''
-            }
-        }
+            echo "Health check failed!"
+            exit 1
+        '''
+    }
+}
+
 
         stage('Verify Project') {
             steps {
